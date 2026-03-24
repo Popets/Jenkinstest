@@ -1,5 +1,5 @@
 pipeline {
-    agent any   // Simple agent - works without extra plugins
+    agent any
 
     triggers {
         githubPush()
@@ -27,11 +27,13 @@ pipeline {
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
+            junit allowEmptyResults: true,
+                  testResults: '**/target/surefire-reports/*.xml'
+
             archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
         }
         success {
-            echo '✅ Build succeeded on main branch!'
+            echo '✅ Build succeeded!'
         }
         failure {
             echo '❌ Build failed!'

@@ -1,8 +1,9 @@
 pipeline {
     agent {
         docker {
-            image 'eclipse-temurin:21'
-            args '-u root'   // optional, helps with permissions
+            image 'eclipse-temurin:21-jdk'
+            // image 'maven:3.9.9-eclipse-temurin-21'
+            reuseNode true
         }
     }
 
@@ -17,23 +18,29 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build with Maven Wrapper') {
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw -B clean package'
+                sh './mvnw clean package'
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
                 sh './mvnw test'
             }
         }
+    }
 
-        stage('Archive Artifact') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
+        }
+        success {
+            echo '✅ Build succeeded!'
+        }
+        failure {
+            echo '❌ Build failed!'
         }
     }
 }

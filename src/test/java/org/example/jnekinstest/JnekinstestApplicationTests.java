@@ -10,4 +10,9 @@ class JnekinstestApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    void test() {
+        assert true;
+    }
+
 }

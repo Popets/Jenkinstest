@@ -6,12 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build with Maven Wrapper') {
             steps {
                 sh './mvnw clean package -DskipTests'

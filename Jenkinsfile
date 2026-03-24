@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'eclipse-temurin:21-jdk'
-            // image 'maven:3.9.9-eclipse-temurin-21'
-            reuseNode true
-        }
-    }
+    agent any   // Simple agent - works without extra plugins
 
     triggers {
         githubPush()
@@ -20,7 +14,7 @@ pipeline {
 
         stage('Build with Maven Wrapper') {
             steps {
-                sh './mvnw clean package'
+                sh './mvnw clean package -DskipTests'
             }
         }
 
@@ -37,7 +31,7 @@ pipeline {
             archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
         }
         success {
-            echo '✅ Build succeeded!'
+            echo '✅ Build succeeded on main branch!'
         }
         failure {
             echo '❌ Build failed!'
